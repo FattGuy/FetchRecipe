@@ -6,7 +6,7 @@
 //
 
 import XCTest
-@testable import MyRecipe
+@testable import FetchRecipe
 
 @MainActor
 class RecipesViewModelTests: XCTestCase {

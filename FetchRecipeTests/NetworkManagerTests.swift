@@ -6,7 +6,7 @@
 //
 
 import XCTest
-@testable import MyRecipe
+@testable import FetchRecipe
 
 class NetworkManagerTests: XCTestCase {
     var networkManager: NetworkManager!

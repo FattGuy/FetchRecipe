@@ -6,7 +6,7 @@
 //
 
 import XCTest
-@testable import MyRecipe
+@testable import FetchRecipe
 
 class RecipeTests: XCTestCase {
     func testRecipeDecoding() throws {

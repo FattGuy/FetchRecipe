@@ -7,27 +7,31 @@
 
 import Foundation
 
-/// A mock version of `URLSession` that allows us to simulate API responses for testing.
 class URLSessionMock: URLSessionProtocol {
     var testData: Data?
-    var testResponse: URLResponse?
+    var testResponse: HTTPURLResponse?
     var testError: Error?
-
-    init(data: Data?, response: URLResponse?, error: Error?) {
+    
+    /// Allows configuring mock session easily
+    init(data: Data? = nil, statusCode: Int = 200, error: Error? = nil) {
         self.testData = data
-        self.testResponse = response
         self.testError = error
+        self.testResponse = HTTPURLResponse(url: URL(string: "https://mock.api.com")!,
+                                            statusCode: statusCode,
+                                            httpVersion: nil,
+                                            headerFields: nil)
     }
-
+    
+    /// Simulates async network request
     func data(from url: URL) async throws -> (Data, URLResponse) {
         if let error = testError {
             throw error
         }
-
+        
         guard let data = testData, let response = testResponse else {
             throw URLError(.badServerResponse)
         }
-
+        
         return (data, response)
     }
 }

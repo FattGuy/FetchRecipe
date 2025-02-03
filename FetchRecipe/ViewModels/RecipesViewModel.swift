@@ -15,7 +15,12 @@ final class RecipesViewModel: ObservableObject {
     @Published var isRefreshing = false   // Top spinner for pull-to-refresh
     @Published var errorMessage: String?
     
-    private let batchSize = 20  // Number of recipes to load per scroll
+    private let batchSize = 10  // Number of recipes to load per scroll
+    private let networkManager: NetworkManager
+    
+    init(networkManager: NetworkManager = NetworkManager.shared) {
+        self.networkManager = networkManager
+    }
     
     /// Loads recipes initially
     func loadAllRecipes() async {
@@ -25,12 +30,12 @@ final class RecipesViewModel: ObservableObject {
         errorMessage = nil
         
         do {
-            allRecipes = try await NetworkManager.shared.fetchRecipes()
+            allRecipes = try await self.networkManager.fetchRecipes()
             displayedRecipes = Array(allRecipes.prefix(batchSize))
             
             // Handle Empty Recipes Case
             if allRecipes.isEmpty {
-                errorMessage = "No recipes available. Please check back later."
+                errorMessage = "No recipes found. Please check back later."
             }
         } catch let error as DecodingError {
             errorMessage = "We couldn't read the recipe data. Please try again later."

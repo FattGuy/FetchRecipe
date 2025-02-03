@@ -13,25 +13,18 @@ class NetworkManagerTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        networkManager = NetworkManager.shared
     }
     
     func testFetchRecipesEmptyData() async {
         let emptyJSON = """
-            {
-                "recipes": []
-            }
-            """.data(using: .utf8)!  // Empty JSON structure
-        
-        let mockSession = URLSessionMock(
-            data: emptyJSON,
-            response: HTTPURLResponse(url: URL(string: "https://example.com")!,
-                                      statusCode: 200, httpVersion: nil, headerFields: nil),
-            error: nil
-        )
-        
+        {
+            "recipes": []
+        }
+        """.data(using: .utf8)!
+
+        let mockSession = URLSessionMock(data: emptyJSON)
         networkManager = NetworkManager(session: mockSession)
-        
+
         do {
             let recipes = try await networkManager.fetchRecipes()
             XCTAssertTrue(recipes.isEmpty, "Recipes array should be empty")
@@ -45,38 +38,32 @@ class NetworkManagerTests: XCTestCase {
         {
             "recipes": [
                 {
-                    "uuid": 123,  // Wrong data type (should be a string)
-                    "name": 456,  // Wrong data type (should be a string)
+                    "uuid": 123,  // Invalid UUID format
+                    "name": 456,  // Should be a string
                     "cuisine": null,  // Null value
-                    "source_url": "not a url",  // Invalid URL format
-                    "youtube_url": 100,  // Wrong data type
-                    "photo_url_small": false,  // Wrong data type
-                    "photo_url_large": []  // Wrong data type
+                    "source_url": "not a url",  // Invalid URL
+                    "youtube_url": 100,  // Should be a string
+                    "photo_url_small": false,  // Should be a string
+                    "photo_url_large": []  // Should be a string
                 }
             ]
         }
         """.data(using: .utf8)!
-        
-        let mockSession = URLSessionMock(
-            data: malformedJSON,
-            response: HTTPURLResponse(url: URL(string: "https://example.com")!,
-                                      statusCode: 200, httpVersion: nil, headerFields: nil),
-            error: nil
-        )
-        
+
+        let mockSession = URLSessionMock(data: malformedJSON)
         networkManager = NetworkManager(session: mockSession)
-        
+
         do {
             _ = try await networkManager.fetchRecipes()
             XCTFail("Expected DecodingError but got success response")
-        } catch let error as DecodingError {
-            XCTAssertNotNil(error, "Decoding error should be thrown")
+        } catch is DecodingError {
+            XCTAssertTrue(true, "Expected DecodingError was thrown correctly")
         } catch {
             XCTFail("Expected DecodingError but got another error: \(error)")
         }
     }
     
-    func testFetchRecipesSuccess() async throws {
+    func testFetchRecipesSuccess() async {
         let mockJSON = """
         {
             "recipes": [
@@ -93,14 +80,8 @@ class NetworkManagerTests: XCTestCase {
         }
         """.data(using: .utf8)!
 
-        let mockSession = URLSessionMock(
-            data: mockJSON,
-            response: HTTPURLResponse(url: URL(string: "https://example.com")!,
-                                      statusCode: 200, httpVersion: nil, headerFields: nil),
-            error: nil
-        )
-
-        let networkManager = NetworkManager(session: mockSession)
+        let mockSession = URLSessionMock(data: mockJSON)
+        networkManager = NetworkManager(session: mockSession)
 
         let expectation = expectation(description: "Fetching recipes completes")
         
@@ -118,27 +99,26 @@ class NetworkManagerTests: XCTestCase {
     }
     
     func testFetchRecipesInvalidResponse() async {
-        let mockSession = URLSessionMock(data: nil, response: nil, error: URLError(.badServerResponse))
-        let networkManager = NetworkManager(session: mockSession)
-        
+        let mockSession = URLSessionMock(data: nil, statusCode: 500)  // Simulating Server Error (500)
+        networkManager = NetworkManager(session: mockSession)
+
         do {
             _ = try await networkManager.fetchRecipes()
             XCTFail("Expected failure but succeeded")
         } catch {
-            XCTAssertTrue(error is URLError)
+            XCTAssertTrue(error is URLError, "Expected URLError due to bad server response")
         }
     }
     
     func testFetchRecipesNetworkFailure() async {
-        let mockSession = URLSessionMock(data: nil, response: nil, error: URLError(.notConnectedToInternet))
-        let networkManager = NetworkManager(session: mockSession)
+        let mockSession = URLSessionMock(error: URLError(.notConnectedToInternet))
+        networkManager = NetworkManager(session: mockSession)
 
         do {
             _ = try await networkManager.fetchRecipes()
             XCTFail("Expected network error but got success response")
         } catch {
-            XCTAssertTrue(error is URLError)
+            XCTAssertTrue(error is URLError, "Expected URLError due to no internet connection")
         }
     }
 }
-

@@ -22,7 +22,12 @@ struct RecipesView: View {
                     VStack {
                         LazyVGrid(columns: columns, spacing: 16) {
                             ForEach(viewModel.displayedRecipes, id: \.id) { recipe in
-                                //TODO:
+                                NavigationLink(destination: RecipeDetailView(recipe: recipe)) {
+                                    RecipeGridItem(recipe: recipe)
+                                }
+                                .onAppear {
+                                    loadMoreContentIfNeeded(currentRecipe: recipe)
+                                }
                             }
                         }
                         .padding()

@@ -13,7 +13,9 @@ struct RecipeGridItem: View {
     var body: some View {
         VStack(alignment: .leading) {
             // Recipe Image
-            //TODO:
+            AsyncImageView(url: recipe.photoUrlSmall)
+                .frame(height: 120)
+                .clipShape(RoundedRectangle(cornerRadius: 10))
 
             // Recipe Name
             Text(recipe.name)

@@ -25,18 +25,4 @@ struct Recipe: Codable, Identifiable {
         case photoUrlSmall = "photo_url_small"
         case photoUrlLarge = "photo_url_large"
     }
-    
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        
-        id = try container.decode(UUID.self, forKey: .id)
-        name = try container.decode(String.self, forKey: .name)
-        cuisine = try container.decode(String.self, forKey: .cuisine)
-        
-        // Gracefully handle invalid URLs
-        sourceUrl = URL(string: (try? container.decode(String.self, forKey: .sourceUrl)) ?? "")
-        youtubeUrl = URL(string: (try? container.decode(String.self, forKey: .youtubeUrl)) ?? "")
-        photoUrlSmall = URL(string: (try? container.decode(String.self, forKey: .photoUrlSmall)) ?? "")
-        photoUrlLarge = URL(string: (try? container.decode(String.self, forKey: .photoUrlLarge)) ?? "")
-    }
 }

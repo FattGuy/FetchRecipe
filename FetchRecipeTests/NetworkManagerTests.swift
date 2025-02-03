@@ -41,8 +41,6 @@ class NetworkManagerTests: XCTestCase {
                     "uuid": 123,  // Invalid UUID format
                     "name": 456,  // Should be a string
                     "cuisine": null,  // Null value
-                    "source_url": "not a url",  // Invalid URL
-                    "youtube_url": 100,  // Should be a string
                     "photo_url_small": false,  // Should be a string
                     "photo_url_large": []  // Should be a string
                 }

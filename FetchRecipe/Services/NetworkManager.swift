@@ -44,13 +44,14 @@ final class NetworkManager {
             do {
                 let recipeResponse = try decoder.decode(RecipeResponse.self, from: data)
                 
-                // Validate each recipe
+                // validation for malformed recipes
                 let isMalformed = recipeResponse.recipes.contains { recipe in
-                    recipe.name.isEmpty ||
-                    recipe.cuisine.isEmpty ||
-                    recipe.id.uuidString.isEmpty ||
-                    recipe.photoUrlLarge == nil ||
-                    recipe.photoUrlSmall == nil
+                    guard let uuid = UUID(uuidString: recipe.id.uuidString) else { return true }
+                    if recipe.name.trimmingCharacters(in: .whitespaces).isEmpty { return true }
+                    if recipe.cuisine.trimmingCharacters(in: .whitespaces).isEmpty { return true }
+                    if recipe.photoUrlLarge == nil || recipe.photoUrlSmall == nil { return true }
+                    
+                    return false
                 }
                 
                 // If any recipe is malformed, discard the entire list

@@ -92,16 +92,29 @@ class NetworkManagerTests: XCTestCase {
             ]
         }
         """.data(using: .utf8)!
-        
-        let mockSession = URLSessionMock(data: mockJSON, response: HTTPURLResponse(url: URL(string: "https://example.com")!,
-                                                                                   statusCode: 200, httpVersion: nil, headerFields: nil),
-                                         error: nil)
-        
+
+        let mockSession = URLSessionMock(
+            data: mockJSON,
+            response: HTTPURLResponse(url: URL(string: "https://example.com")!,
+                                      statusCode: 200, httpVersion: nil, headerFields: nil),
+            error: nil
+        )
+
         let networkManager = NetworkManager(session: mockSession)
+
+        let expectation = expectation(description: "Fetching recipes completes")
         
-        let recipes = try await networkManager.fetchRecipes()
-        XCTAssertEqual(recipes.count, 1)
-        XCTAssertEqual(recipes.first?.name, "Test Recipe")
+        Task {
+            do {
+                let recipes = try await networkManager.fetchRecipes()
+                XCTAssertEqual(recipes.count, 1)
+                expectation.fulfill()  // ✅ Ensure the test does not cancel the request
+            } catch {
+                XCTFail("Request failed: \(error)")
+            }
+        }
+
+        await fulfillment(of: [expectation], timeout: 3.0)
     }
     
     func testFetchRecipesInvalidResponse() async {

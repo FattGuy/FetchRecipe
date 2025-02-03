@@ -45,18 +45,22 @@ final class RecipesViewModel: ObservableObject {
     
     /// Loads more recipes for infinite scrolling
     func loadMoreRecipes() {
-        guard displayedRecipes.count < allRecipes.count, !isLoadingMore else { return }
+        guard displayedRecipes.count < allRecipes.count, !isLoadingMore else {
+            print("No more recipes to load or already loading.") // Debugging
+            return
+        }
 
         isLoadingMore = true
+        print("Loading more recipes...") // Debugging
 
-        Task.detached(priority: .background) { [weak self] in
-            guard let self = self else { return }
-            try? await Task.sleep(nanoseconds: 1_000_000_000)
+        Task {
+            try? await Task.sleep(nanoseconds: 1_000_000_000)  // Simulated delay
 
             await MainActor.run {
-                let nextBatchEndIndex = min(self.displayedRecipes.count + self.batchSize, self.allRecipes.count)
-                self.displayedRecipes.append(contentsOf: self.allRecipes[self.displayedRecipes.count..<nextBatchEndIndex])
-                self.isLoadingMore = false
+                let nextBatchEndIndex = min(displayedRecipes.count + batchSize, allRecipes.count)
+                displayedRecipes.append(contentsOf: allRecipes[displayedRecipes.count..<nextBatchEndIndex])
+                isLoadingMore = false
+                print("Successfully loaded more recipes. Current count: \(displayedRecipes.count)") // Debugging
             }
         }
     }

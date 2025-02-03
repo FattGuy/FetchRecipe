@@ -33,7 +33,7 @@ final class RecipesViewModel: ObservableObject {
                 errorMessage = "No recipes available. Please check back later."
             }
         } catch let error as DecodingError {
-            errorMessage = "Failed to decode recipe data. Please try again later."
+            errorMessage = "We couldn't read the recipe data. Please try again later."
             print("Decoding Error: \(error)")
         } catch {
             errorMessage = "Network error: \(error.localizedDescription)"

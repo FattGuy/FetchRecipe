@@ -43,6 +43,22 @@ final class NetworkManager {
             
             do {
                 let recipeResponse = try decoder.decode(RecipeResponse.self, from: data)
+                
+                // Validate each recipe
+                let isMalformed = recipeResponse.recipes.contains { recipe in
+                    recipe.name.isEmpty ||
+                    recipe.cuisine.isEmpty ||
+                    recipe.id.uuidString.isEmpty ||
+                    recipe.photoUrlLarge == nil ||
+                    recipe.photoUrlSmall == nil
+                }
+                
+                // If any recipe is malformed, discard the entire list
+                if isMalformed {
+                    print("Malformed data detected, discarding all recipes.")
+                    throw DecodingError.dataCorrupted(.init(codingPath: [], debugDescription: "Malformed recipes detected"))
+                }
+                
                 return recipeResponse.recipes
             } catch let decodingError as DecodingError {
                 print("JSON Decoding Error: \(decodingError)")

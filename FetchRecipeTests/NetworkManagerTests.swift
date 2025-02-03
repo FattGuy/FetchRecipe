@@ -21,7 +21,7 @@ class NetworkManagerTests: XCTestCase {
             {
                 "recipes": []
             }
-            """.data(using: .utf8)!  // ✅ Empty JSON structure
+            """.data(using: .utf8)!  // Empty JSON structure
         
         let mockSession = URLSessionMock(
             data: emptyJSON,
@@ -45,13 +45,13 @@ class NetworkManagerTests: XCTestCase {
         {
             "recipes": [
                 {
-                    "uuid": 123,  // ❌ Wrong data type (should be a string)
-                    "name": 456,  // ❌ Wrong data type (should be a string)
-                    "cuisine": null,  // ❌ Null value
-                    "source_url": "not a url",  // ❌ Invalid URL format
-                    "youtube_url": 100,  // ❌ Wrong data type
-                    "photo_url_small": false,  // ❌ Wrong data type
-                    "photo_url_large": []  // ❌ Wrong data type
+                    "uuid": 123,  // Wrong data type (should be a string)
+                    "name": 456,  // Wrong data type (should be a string)
+                    "cuisine": null,  // Null value
+                    "source_url": "not a url",  // Invalid URL format
+                    "youtube_url": 100,  // Wrong data type
+                    "photo_url_small": false,  // Wrong data type
+                    "photo_url_large": []  // Wrong data type
                 }
             ]
         }

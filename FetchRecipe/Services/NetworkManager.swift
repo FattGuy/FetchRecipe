@@ -40,6 +40,7 @@ final class NetworkManager {
             }
 
             let decoder = JSONDecoder()
+            decoder.keyDecodingStrategy = .convertFromSnakeCase
 
             do {
                 let recipeResponse = try decoder.decode(RecipeResponse.self, from: data)

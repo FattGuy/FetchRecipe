@@ -29,23 +29,23 @@ class RecipesViewModelTests: XCTestCase {
     }
     
     func testLoadMoreRecipes() async throws {
-        await viewModel.loadAllRecipes()  // ✅ Load initial recipes
+        await viewModel.loadAllRecipes()  // Load initial recipes
         
         let initialCount = viewModel.displayedRecipes.count
         XCTAssertGreaterThan(initialCount, 0, "Displayed recipes should not be empty after loading")
         
-        // ✅ Ensure allRecipes has more than batchSize recipes
+        // Ensure allRecipes has more than batchSize recipes
         XCTAssertGreaterThan(viewModel.allRecipes.count, initialCount, "There should be more recipes available to load")
         
-        let expectation = expectation(description: "Load More Recipes Completes")  // ✅ Wait for Task to finish
+        let expectation = expectation(description: "Load More Recipes Completes")  // Wait for Task to finish
         
         Task {
             viewModel.loadMoreRecipes()
-            try? await Task.sleep(nanoseconds: 1_500_000_000)  // ✅ Give it time to complete
+            try? await Task.sleep(nanoseconds: 1_500_000_000)  // Give it time to complete
             expectation.fulfill()
         }
         
-        await fulfillment(of: [expectation], timeout: 3.0)  // ✅ Test waits up to 3 seconds
+        await fulfillment(of: [expectation], timeout: 3.0)  // Test waits up to 3 seconds
         
         XCTAssertGreaterThan(viewModel.displayedRecipes.count, initialCount, "More recipes should be loaded")
     }

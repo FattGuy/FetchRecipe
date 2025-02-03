@@ -9,12 +9,13 @@ import SwiftUI
 
 struct RecipesView: View {
     @StateObject private var viewModel = RecipesViewModel()
-
+    @State private var isSortedAscending = true
+    
     private let columns = [
         GridItem(.flexible(), spacing: 16),
         GridItem(.flexible(), spacing: 16)
     ]
-
+    
     var body: some View {
         NavigationView {
             ScrollViewReader { scrollProxy in  // Add ScrollViewReader for smooth scrolling
@@ -33,7 +34,7 @@ struct RecipesView: View {
                         .padding()
                         .id("TOP")  // Used to scroll back to top smoothly
                     }
-
+                    
                     // Bottom Spinner (for Infinite Scrolling)
                     if viewModel.isLoadingMore {
                         ProgressView()
@@ -45,20 +46,35 @@ struct RecipesView: View {
                 }
                 .refreshable {
                     await viewModel.refreshRecipes()
-
+                    
                     // Smoothly move navigation bar & collection together
                     withAnimation(.easeInOut(duration: 0.4)) {
                         scrollProxy.scrollTo("TOP", anchor: .top)
                     }
                 }
-                .navigationTitle("Recipes")
+                .navigationTitle("Recipes")  // Remove default title
+                .navigationBarTitleDisplayMode(.automatic)  // Make title inline
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {  // ✅ Places button in the large title area
+                        Button(action: {
+                            isSortedAscending.toggle()
+                            viewModel.sortRecipes(ascending: isSortedAscending)
+                        }) {
+                            HStack {
+                                Text(isSortedAscending ? "A → Z" : "Z → A")
+                            }
+                            .foregroundColor(.blue)
+                            .font(.headline)
+                        }
+                    }
+                }
                 .task {
                     await viewModel.loadAllRecipes()
                 }
             }
         }
     }
-
+    
     /// Triggers pagination when the last item appears
     private func loadMoreContentIfNeeded(currentRecipe: Recipe) {
         guard let lastRecipe = viewModel.displayedRecipes.last else { return }

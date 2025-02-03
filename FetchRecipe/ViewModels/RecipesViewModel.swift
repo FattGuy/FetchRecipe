@@ -87,4 +87,9 @@ final class RecipesViewModel: ObservableObject {
         
         isRefreshing = false  // Stop top spinner
     }
+    
+    func sortRecipes(ascending: Bool) {
+        allRecipes.sort { ascending ? $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending : $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedDescending }
+        displayedRecipes = Array(allRecipes.prefix(batchSize))
+    }
 }

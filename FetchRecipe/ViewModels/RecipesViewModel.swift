@@ -28,16 +28,16 @@ final class RecipesViewModel: ObservableObject {
             allRecipes = try await NetworkManager.shared.fetchRecipes()
             displayedRecipes = Array(allRecipes.prefix(batchSize))
             
-            // ✅ Handle Empty Recipes Case
+            // Handle Empty Recipes Case
             if allRecipes.isEmpty {
-                errorMessage = "⚠️ No recipes available. Please check back later."
+                errorMessage = "No recipes available. Please check back later."
             }
         } catch let error as DecodingError {
-            errorMessage = "⚠️ Failed to decode recipe data. Please try again later."
-            print("❌ Decoding Error: \(error)")
+            errorMessage = "Failed to decode recipe data. Please try again later."
+            print("Decoding Error: \(error)")
         } catch {
-            errorMessage = "⚠️ Network error: \(error.localizedDescription)"
-            print("❌ Network Error: \(error)")
+            errorMessage = "Network error: \(error.localizedDescription)"
+            print("Network Error: \(error)")
         }
         
         isRefreshing = false

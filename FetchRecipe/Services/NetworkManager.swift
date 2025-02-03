@@ -35,7 +35,7 @@ final class NetworkManager {
 
             // Handle Empty Data Case
             guard !data.isEmpty else {
-                print("⚠️ API returned empty data.")
+                print("API returned empty data.")
                 return []  // Return an empty list instead of throwing an error
             }
 
@@ -46,12 +46,12 @@ final class NetworkManager {
                 let recipeResponse = try decoder.decode(RecipeResponse.self, from: data)
                 return recipeResponse.recipes
             } catch let decodingError as DecodingError {
-                print("❌ JSON Decoding Error: \(decodingError)")
+                print("JSON Decoding Error: \(decodingError)")
                 throw decodingError  // Rethrow so ViewModel can handle it
             }
 
         } catch {
-            print("❌ Network Error: \(error)")
+            print("Network Error: \(error)")
             throw error
         }
     }

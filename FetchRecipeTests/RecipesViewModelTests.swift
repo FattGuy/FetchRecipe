@@ -16,6 +16,15 @@ class RecipesViewModelTests: XCTestCase {
     override func setUp() {
         super.setUp()
         viewModel = RecipesViewModel()
+        
+        // Set up mock data
+        let mockRecipes = [
+            Recipe(id: UUID(), name: "Banana Pancakes", cuisine: "American", sourceUrl: nil, youtubeUrl: nil, photoUrlSmall: nil, photoUrlLarge: nil),
+            Recipe(id: UUID(), name: "Apple Pie", cuisine: "American", sourceUrl: nil, youtubeUrl: nil, photoUrlSmall: nil, photoUrlLarge: nil),
+            Recipe(id: UUID(), name: "Zucchini Bread", cuisine: "Italian", sourceUrl: nil, youtubeUrl: nil, photoUrlSmall: nil, photoUrlLarge: nil)
+        ]
+        
+        viewModel.setMockRecipes(mockRecipes)
     }
     
     func testLoadAllRecipes() async {
@@ -52,5 +61,19 @@ class RecipesViewModelTests: XCTestCase {
         
         print("Final displayedRecipes count: \(viewModel.displayedRecipes.count)") // Debugging
         XCTAssertGreaterThan(viewModel.displayedRecipes.count, initialCount, "More recipes should be loaded")
+    }
+    
+    func testSortRecipesAscending() {
+        viewModel.sortRecipes(ascending: true)
+        
+        let sortedNames = viewModel.displayedRecipes.map { $0.name }
+        XCTAssertEqual(sortedNames, ["Apple Pie", "Banana Pancakes", "Zucchini Bread"], "Sorting should be A → Z")
+    }
+    
+    func testSortRecipesDescending() {
+        viewModel.sortRecipes(ascending: false)
+        
+        let sortedNames = viewModel.displayedRecipes.map { $0.name }
+        XCTAssertEqual(sortedNames, ["Zucchini Bread", "Banana Pancakes", "Apple Pie"], "Sorting should be Z → A")
     }
 }

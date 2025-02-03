@@ -92,4 +92,9 @@ final class RecipesViewModel: ObservableObject {
         allRecipes.sort { ascending ? $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending : $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedDescending }
         displayedRecipes = Array(allRecipes.prefix(batchSize))
     }
+    
+    func setMockRecipes(_ recipes: [Recipe]) {
+        self.allRecipes = recipes
+        self.displayedRecipes = recipes
+    }
 }

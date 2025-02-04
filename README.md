@@ -11,7 +11,7 @@
 - **🚨 Edge Case Handling:** Handles malformed JSON and empty responses.
 
 ### 📸 **Screenshots & Video Demo**
-*(Include screenshots or a link to a video demo here)*
+https://github.com/user-attachments/assets/b8cdf36e-8e6e-49e1-86f1-af805bb9f76d
 
 ---
 ## 🎯 Focus Areas

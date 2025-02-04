@@ -78,12 +78,6 @@ final class RecipesViewModel: ObservableObject {
         errorMessage = nil
         
         do {
-            // Create a new Task to ensure it runs independently
-            // Currently this is causing a cancellation error
-            await Task { @MainActor in
-                try? await Task.sleep(nanoseconds: 1_500_000_000)  // 1.5s delay
-            }.value  // Ensures it fully completes before proceeding
-            
             // Now fetch new data
             allRecipes = try await NetworkManager.shared.fetchRecipes()
             displayedRecipes = Array(allRecipes.prefix(batchSize))  // Reset the displayed list

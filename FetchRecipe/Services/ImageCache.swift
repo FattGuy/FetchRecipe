@@ -39,7 +39,7 @@ final class ImageCache {
     func saveImage(_ image: UIImage, for url: URL) {
         guard let data = image.jpegData(compressionQuality: 0.8) else { return }
 
-        cache.setObject(image, forKey: url as NSURL, cost: data.count)  // ✅ Store based on memory cost
+        cache.setObject(image, forKey: url as NSURL, cost: data.count)  // Store based on memory cost
 
         let hashedFileName = "\(url.absoluteString.hashValue).jpg"
         let filePath = cacheDirectory.appendingPathComponent(hashedFileName)
